@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Skill Gap Checker</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+  <header class="topbar">
+    <h1>Skill Gap Checker</h1>
+    <p>Compare a resume against a job description using AI-powered skill extraction</p>
+  </header>
+
+  <main class="container">
+
+    <section class="input-grid">
+      <div class="input-card">
+        <div class="input-card-header">
+          <h2>Resume</h2>
+          <label class="upload-btn">
+            Upload file
+            <input type="file" id="resumeFile" accept=".pdf,.docx,.txt" hidden>
+          </label>
+        </div>
+        <textarea id="resumeText" placeholder="Paste resume text here..."></textarea>
+        <span class="file-name" id="resumeFileName"></span>
+      </div>
+
+      <div class="input-card">
+        <div class="input-card-header">
+          <h2>Job Description</h2>
+          <label class="upload-btn">
+            Upload file
+            <input type="file" id="jdFile" accept=".pdf,.docx,.txt" hidden>
+          </label>
+        </div>
+        <textarea id="jdText" placeholder="Paste job description text here..."></textarea>
+        <span class="file-name" id="jdFileName"></span>
+      </div>
+    </section>
+
+    <div class="analyze-row">
+      <button id="analyzeBtn">Analyze Skill Gap</button>
+      <span id="statusMsg"></span>
+    </div>
+
+    <section id="resultsSection" class="results hidden">
+      <div class="results-grid">
+
+        <div class="percentage-card">
+          <div class="ring-wrap">
+            <svg viewBox="0 0 120 120" class="ring">
+              <circle cx="60" cy="60" r="52" class="ring-bg"></circle>
+              <circle cx="60" cy="60" r="52" class="ring-fill" id="ringFill"></circle>
+            </svg>
+            <div class="ring-label" id="percentLabel">0%</div>
+          </div>
+          <p>Match Score</p>
+        </div>
+
+        <div class="skills-card matched">
+          <h3>Matched Skills</h3>
+          <div class="tag-list" id="matchedList"></div>
+        </div>
+
+        <div class="skills-card missing">
+          <h3>Missing Skills</h3>
+          <div class="tag-list" id="missingList"></div>
+        </div>
+
+      </div>
+    </section>
+
+    <section class="history-section">
+      <h2>Recent Analyses</h2>
+      <table id="historyTable">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Matched</th>
+            <th>Missing</th>
+            <th>Match %</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody id="historyBody"></tbody>
+      </table>
+    </section>
+
+  </main>
+
+  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
