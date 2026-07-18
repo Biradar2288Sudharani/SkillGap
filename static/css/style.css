@@ -232,7 +232,7 @@ textarea:focus { outline: 2px solid var(--ink); outline-offset: 1px; }
   font-family: 'Inter', sans-serif;
 }
 
-.history-section { margin-top: 48px; }
+/* .history-section { margin-top: 48px; }
 .history-section h2 {
   font-family: 'Space Grotesk', sans-serif;
   font-size: 16px;
@@ -266,4 +266,139 @@ textarea:focus { outline: 2px solid var(--ink); outline-offset: 1px; }
 #historyTable td.pct {
   font-family: 'JetBrains Mono', monospace;
   font-weight: 700;
+} */
+
+.verdict-card {
+  margin-top: 20px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 20px 22px;
+}
+
+.verdict-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.verdict-header > span:first-child {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ink-soft);
+}
+
+.verdict-badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+  font-size: 13px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  background: var(--line);
+  color: var(--ink);
+}
+
+.verdict-badge.qualified { background: var(--match-bg); color: var(--match); }
+.verdict-badge.almost-there { background: #FDF3D9; color: #92700F; }
+.verdict-badge.not-yet { background: var(--missing-bg); color: var(--missing); }
+
+.reasons-list {
+  margin: 0;
+  padding-left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.reasons-list li {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--ink);
+}
+
+.history-section { margin-top: 48px; }
+
+/* New css for history table section */
+.history-section { margin-top: 48px; }
+.history-section h2 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 16px;
+  margin-bottom: 14px;
+}
+
+.table-wrap {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(27, 36, 48, 0.06);
+}
+
+#historyTable {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--panel);
+}
+
+#historyTable th, #historyTable td {
+  text-align: left;
+  padding: 13px 16px;
+  font-size: 13.5px;
+}
+
+#historyTable th {
+  background: #F5F7F9;
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: var(--ink-soft);
+  font-weight: 600;
+  border-bottom: 1px solid var(--line);
+}
+
+#historyTable tbody tr {
+  border-bottom: 1px solid var(--line);
+  transition: background 0.15s ease;
+}
+
+#historyTable tbody tr:last-child { border-bottom: none; }
+
+#historyTable tbody tr:nth-child(even) {
+  background: #FAFBFC;
+}
+
+#historyTable tbody tr:hover {
+  background: #EEF3F6;
+}
+
+#historyTable td:first-child {
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--ink-soft);
+  font-weight: 500;
+}
+
+#historyTable td.pct {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+}
+
+#historyTable .verdict-badge {
+  font-size: 11px;
+  padding: 4px 10px;
+}
+
+#historyTable td:last-child {
+  color: var(--ink-soft);
+  font-size: 12.5px;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.history-empty {
+  display: block;
+  padding: 28px;
+  text-align: center;
+  color: var(--ink-soft);
+  font-size: 13px;
 }

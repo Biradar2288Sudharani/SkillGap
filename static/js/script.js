@@ -77,6 +77,20 @@ function renderResults(data) {
   const missingList = document.getElementById('missingList');
   matchedList.innerHTML = data.matched_skills.map(s => `<span class="tag">${escapeHtml(s)}</span>`).join('');
   missingList.innerHTML = data.missing_skills.map(s => `<span class="tag">${escapeHtml(s)}</span>`).join('');
+
+  const verdictBadge = document.getElementById('verdictBadge');
+  verdictBadge.textContent = data.verdict || '—';
+  verdictBadge.className = 'verdict-badge ' + verdictClass(data.verdict);
+
+  const reasonsList = document.getElementById('reasonsList');
+  reasonsList.innerHTML = (data.reasons || []).map(r => `<li>${escapeHtml(r)}</li>`).join('');
+}
+
+function verdictClass(verdict) {
+  if (verdict === 'Qualified') return 'qualified';
+  if (verdict === 'Almost There') return 'almost-there';
+  if (verdict === 'Not Yet') return 'not-yet';
+  return '';
 }
 
 async function loadHistory() {
@@ -90,6 +104,7 @@ async function loadHistory() {
         <td>${r.matched_skills.length}</td>
         <td>${r.missing_skills.length}</td>
         <td class="pct">${r.match_percentage}%</td>
+        <td><span class="verdict-badge ${verdictClass(r.verdict)}">${r.verdict || '—'}</span></td>
         <td>${r.created_at}</td>
       </tr>
     `).join('');
