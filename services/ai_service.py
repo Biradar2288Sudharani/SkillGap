@@ -86,8 +86,9 @@ def extract_skills_from_both(resume_text: str, jd_text: str) -> dict:
             temperature=0,
             response_mime_type="application/json",
         ),
+        request_options={"timeout": 45},
     )
-
+    
     try:
         parsed = json.loads(response.text)
         return {
