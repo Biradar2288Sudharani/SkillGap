@@ -52,7 +52,7 @@ Visit **http://localhost:5000**
 
 ---
 
-## 3. How it works (for your interview walkthrough)
+## 3. How it works
 
 **Flow:** paste or upload resume + JD → `/analyze` → AI extracts skills →
 Python compares them → result shown + saved to MySQL.
