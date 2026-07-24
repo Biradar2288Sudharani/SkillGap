@@ -7,7 +7,7 @@ and normalize skills, then a deterministic comparison to produce:
 - Match Percentage
 
 ## Stack
-Flask + MySQL (SQLAlchemy) + HTML/CSS/JS + OpenAI API
+Flask + MySQL (SQLAlchemy) + HTML/CSS/JS + GEMINI AI API
 
 ---
 
@@ -28,8 +28,7 @@ cp .env.example .env
 
 Then edit `.env` and fill in:
 - Your MySQL credentials (`MYSQL_USER`, `MYSQL_PASSWORD`, `MYSQL_DB`)
-- Your `OPENAI_API_KEY` (from https://platform.openai.com/api-keys — new accounts
-  get some free trial credit, enough for lots of testing)
+- Your `GEMINI_API_KEY` 
 
 Create the database (either option works):
 
@@ -59,7 +58,7 @@ Visit **http://localhost:5000**
 Python compares them → result shown + saved to MySQL.
 
 1. **`services/ai_service.py`** — sends the raw resume text and raw JD text to
-   OpenAI, one call each, with a strict prompt asking for a normalized JSON
+   GEMINIAI, one call each, with a strict prompt asking for a normalized JSON
    list of skills (so "ReactJS" / "React.js" / "React" all collapse to one
    canonical entry). This is the only part of the app that touches AI.
 
@@ -91,9 +90,5 @@ Python compares them → result shown + saved to MySQL.
    button, results rendered as a percentage ring + matched/missing skill tags,
    plus a history table fetched from `/history`.
 
-## 4. Things you can extend if asked "what would you add next?"
-- Weight skills as required vs. nice-to-have (parse "must have" vs "preferred"
-  language in the JD)
-- Suggested resume rewrites for near-miss skills
-- User accounts, so history is per-recruiter/per-user instead of global
-- Deploy it (Render/Railway for the app + a managed MySQL instance)
+## 4. Now SkillGap Project is Live !!!
+https://skillgap-sus8.onrender.com
