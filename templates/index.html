@@ -14,7 +14,6 @@
   </header>
 
   <main class="container">
-
     <section class="input-grid">
       <div class="input-card">
         <div class="input-card-header">
@@ -48,7 +47,6 @@
 
     <section id="resultsSection" class="results hidden">
       <div class="results-grid">
-
         <div class="percentage-card">
           <div class="ring-wrap">
             <svg viewBox="0 0 120 120" class="ring">
@@ -59,19 +57,15 @@
           </div>
           <p>Match Score</p>
         </div>
-
         <div class="skills-card matched">
           <h3>Matched Skills</h3>
           <div class="tag-list" id="matchedList"></div>
         </div>
-
         <div class="skills-card missing">
           <h3>Missing Skills</h3>
           <div class="tag-list" id="missingList"></div>
         </div>
-
       </div>
-
       <div class="verdict-card" id="verdictCard">
         <div class="verdict-header">
           <span>Fit Verdict</span>
@@ -99,9 +93,7 @@
         </table>
       </div>
     </section>
-
   </main>
-
-  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
 </html>

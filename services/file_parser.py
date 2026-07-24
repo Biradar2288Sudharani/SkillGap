@@ -9,7 +9,6 @@ import io
 from PyPDF2 import PdfReader
 import docx
 
-
 def extract_text_from_file(file_storage):
     """
     file_storage: a werkzeug FileStorage object from request.files
@@ -27,12 +26,10 @@ def extract_text_from_file(file_storage):
     else:
         raise ValueError("Unsupported file type. Please upload .pdf, .docx, or .txt")
 
-
 def _extract_pdf(raw_bytes):
     reader = PdfReader(io.BytesIO(raw_bytes))
     text_parts = [page.extract_text() or "" for page in reader.pages]
     return "\n".join(text_parts)
-
 
 def _extract_docx(raw_bytes):
     document = docx.Document(io.BytesIO(raw_bytes))

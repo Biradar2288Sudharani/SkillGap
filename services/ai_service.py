@@ -15,11 +15,46 @@ Design choice worth mentioning in the interview:
 """
 
 import json
+import time
 import google.generativeai as genai
+from google.api_core.exceptions import DeadlineExceeded, ResourceExhausted, ServiceUnavailable
 from config import Config
 
 genai.configure(api_key=Config.GEMINI_API_KEY)
 _model = genai.GenerativeModel(Config.GEMINI_MODEL)
+
+# Errors worth retrying -- these are almost always transient (a slow
+# network moment, a brief overload on Google's side) rather than a real
+# problem with the request itself.
+_RETRYABLE_ERRORS = (DeadlineExceeded, ResourceExhausted, ServiceUnavailable)
+
+
+def _call_with_retry(prompt, generation_config, max_retries=2):
+    """
+    Calls Gemini with automatic retry-with-backoff on transient failures.
+
+    Why this exists: a single slow moment on Google's end (or the network)
+    used to fail the whole request immediately. That's risky to show live,
+    e.g. in an interview demo. This retries up to `max_retries` extra times
+    with increasing delay before finally giving up, which resolves the large
+    majority of transient timeouts without the user ever seeing an error.
+    """
+    last_error = None
+    for attempt in range(max_retries + 1):
+        try:
+            return _model.generate_content(
+                prompt,
+                generation_config=generation_config,
+                request_options={"timeout": 45},
+            )
+        except _RETRYABLE_ERRORS as e:
+            last_error = e
+            if attempt < max_retries:
+                wait_seconds = 2 * (attempt + 1)  # 2s, then 4s
+                time.sleep(wait_seconds)
+            # else: fall through and raise below after the loop
+
+    raise last_error
 
 JOINT_EXTRACTION_PROMPT = """You are a precise skill-extraction engine for a resume-screening tool.
 
@@ -80,15 +115,21 @@ def extract_skills_from_both(resume_text: str, jd_text: str) -> dict:
         jd_text=jd_text.strip(),
     )
 
-    response = _model.generate_content(
-        prompt,
-        generation_config=genai.types.GenerationConfig(
-            temperature=0,
-            response_mime_type="application/json",
-        ),
-        request_options={"timeout": 45},
-    )
-    
+    try:
+        response = _call_with_retry(
+            prompt,
+            generation_config=genai.types.GenerationConfig(
+                temperature=0,
+                response_mime_type="application/json",
+            ),
+        )
+    except _RETRYABLE_ERRORS as e:
+        # All retries exhausted -- fail gracefully instead of crashing the
+        # request. app.py already turns an empty jd_skills list into a
+        # clear, friendly error message for the user.
+        print(f"[ai_service] Extraction failed after retries: {e}")
+        return {"resume_skills": [], "jd_skills": []}
+
     try:
         parsed = json.loads(response.text)
         return {
@@ -110,6 +151,7 @@ def _dedupe(skills: list) -> list:
             seen.add(key)
             cleaned.append(s.strip())
     return cleaned
+
 
 # ---------------------------------------------------------------------------
 # Assignment 2: Fit Verdict (Qualified / Almost There / Not Yet)
@@ -146,7 +188,10 @@ Data:
 - Match percentage: {match_percentage}%
 """
 
-
+# Rule-based guardrail bands. The AI's verdict is checked against these so a
+# clearly-90%-match candidate can never come back as "Not Yet", and vice
+# versa -- keeps the AI's narrative reasoning without letting it contradict
+# the deterministic numbers.
 def _allowed_verdicts_for(match_percentage: float) -> list:
     if match_percentage >= 75:
         return ["Qualified", "Almost There"]
@@ -159,6 +204,11 @@ def _allowed_verdicts_for(match_percentage: float) -> list:
 def generate_verdict(resume_skills: list, jd_skills: list,
                       matched_skills: list, missing_skills: list,
                       match_percentage: float) -> dict:
+    """
+    Calls the LLM to produce a verdict + 3 reasons, then applies a
+    deterministic guardrail so the verdict can never contradict the
+    computed match percentage.
+    """
     prompt = VERDICT_PROMPT.format(
         jd_skills=", ".join(jd_skills) or "none detected",
         resume_skills=", ".join(resume_skills) or "none detected",
@@ -167,15 +217,22 @@ def generate_verdict(resume_skills: list, jd_skills: list,
         match_percentage=match_percentage,
     )
 
-    response = _model.generate_content(
-        prompt,
-        generation_config=genai.types.GenerationConfig(
-            temperature=0.3,
-            response_mime_type="application/json",
-        ),
-    )
-
     fallback = _fallback_verdict(match_percentage, matched_skills, missing_skills)
+
+    try:
+        response = _call_with_retry(
+            prompt,
+            generation_config=genai.types.GenerationConfig(
+                temperature=0.3,
+                response_mime_type="application/json",
+            ),
+        )
+    except _RETRYABLE_ERRORS as e:
+        # All retries exhausted -- this is exactly what the fallback exists
+        # for. The user still gets a sensible, numbers-consistent verdict
+        # instead of an error.
+        print(f"[ai_service] Verdict generation failed after retries: {e}")
+        return fallback
 
     try:
         parsed = json.loads(response.text)
@@ -184,8 +241,11 @@ def generate_verdict(resume_skills: list, jd_skills: list,
 
         allowed = _allowed_verdicts_for(match_percentage)
         if verdict not in allowed or len(reasons) < 1:
+            # AI's verdict disagreed with the numbers, or response was malformed
+            # -- fall back to the safe, deterministic version instead.
             return fallback
 
+        # Pad to exactly 3 reasons if the model returned fewer
         while len(reasons) < 3:
             reasons.append(fallback["reasons"][len(reasons)])
 
@@ -196,6 +256,7 @@ def generate_verdict(resume_skills: list, jd_skills: list,
 
 
 def _fallback_verdict(match_percentage: float, matched_skills: list, missing_skills: list) -> dict:
+    """Used only if the AI call fails or returns something unusable."""
     allowed = _allowed_verdicts_for(match_percentage)
     verdict = allowed[0]
 

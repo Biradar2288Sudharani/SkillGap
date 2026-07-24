@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register — Skill Gap Checker</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}">
+</head>
+<body class="auth-body">
+
+  <div class="auth-card">
+    <h1>Skill Gap Checker</h1>
+    <p class="auth-subtitle">Create your account</p>
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <div class="auth-error">{{ messages[0] }}</div>
+      {% endif %}
+    {% endwith %}
+
+    <form method="POST" action="{{ url_for('register') }}" class="auth-form" id="registerForm" novalidate>
+
+      <label>Username</label>
+      <input type="text" name="username" id="username" required autofocus autocomplete="username">
+      <span class="field-hint" id="usernameHint">3-20 characters, letters/numbers/underscore only</span>
+      <span class="field-error" id="usernameError"></span>
+
+      <label>Password</label>
+      <input type="password" name="password" id="password" required autocomplete="new-password">
+      <span class="field-hint">Min 8 characters, with 1 uppercase, 1 number, 1 special character</span>
+      <div class="strength-bar-wrap">
+        <div class="strength-bar" id="strengthBar"></div>
+      </div>
+      <span class="field-error" id="passwordError"></span>
+
+      <label>Confirm Password</label>
+      <input type="password" name="confirm_password" id="confirmPassword" required autocomplete="new-password">
+      <span class="field-error" id="confirmError"></span>
+
+      <button type="submit" id="submitBtn">Register</button>
+    </form>
+
+    <p class="auth-switch">
+      Already have an account? <a href="{{ url_for('login') }}">Log In</a>
+    </p>
+  </div>
+
+  <script src="{{ url_for('static', filename='js/auth.js') }}"></script>
+</body>
+</html>

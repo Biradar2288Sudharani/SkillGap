@@ -232,42 +232,6 @@ textarea:focus { outline: 2px solid var(--ink); outline-offset: 1px; }
   font-family: 'Inter', sans-serif;
 }
 
-/* .history-section { margin-top: 48px; }
-.history-section h2 {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 16px;
-  margin-bottom: 12px;
-}
-
-#historyTable {
-  width: 100%;
-  border-collapse: collapse;
-  background: var(--panel);
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  overflow: hidden;
-}
-
-#historyTable th, #historyTable td {
-  text-align: left;
-  padding: 10px 14px;
-  font-size: 13px;
-  border-bottom: 1px solid var(--line);
-}
-
-#historyTable th {
-  background: var(--bg);
-  text-transform: uppercase;
-  font-size: 11px;
-  letter-spacing: 0.05em;
-  color: var(--ink-soft);
-}
-
-#historyTable td.pct {
-  font-family: 'JetBrains Mono', monospace;
-  font-weight: 700;
-} */
-
 .verdict-card {
   margin-top: 20px;
   background: var(--panel);

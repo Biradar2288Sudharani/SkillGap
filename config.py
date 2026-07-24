@@ -2,8 +2,7 @@ import os
 from dotenv import load_dotenv
 from urllib.parse import quote_plus
 
-load_dotenv()  # reads variables from a .env file into the environment
-
+load_dotenv()  # reads variables from .env file into the environment
 
 class Config:
     """
@@ -28,7 +27,6 @@ class Config:
         f"@{MYSQL_HOST}:{MYSQL_PORT}/{MYSQL_DB}"
     )
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-
     MYSQL_SSL_CA = os.getenv("MYSQL_SSL_CA", "")
 
     # pool_pre_ping tests each connection before using it, and transparently
