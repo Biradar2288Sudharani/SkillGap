@@ -16,7 +16,7 @@ Flask + MySQL (SQLAlchemy) + HTML/CSS/JS + GEMINI AI API
 ```bash
 cd skillgap_checker
 python -m venv venv
-source venv/bin/activate        # Windows: venv\Scripts\activate
+venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
